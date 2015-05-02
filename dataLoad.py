@@ -7,6 +7,7 @@ import sqlite3
 conn = sqlite3.connect(':memory:')
 cur = conn.cursor()
 # create table "student" and "course". The relation is "Many-to-One"
+# The order of csv files do matter since we have the foreign key constrain on course_id
 cur.execute('''CREATE TABLE IF NOT EXISTS course
                 (course_id TEXT PRIMARY KEY,
                  course_name TEXT, 
