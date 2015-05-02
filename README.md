@@ -1,2 +1,2 @@
 # InstructureCodingTest
-coding test from Instructor
+coding test from Instructure
