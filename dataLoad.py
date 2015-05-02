@@ -18,19 +18,14 @@ cur.execute('''CREATE TABLE IF NOT EXISTS student
                  state TEXT, 
                  FOREIGN KEY(course_id) REFERENCES course(course_id))''')
 
-
-df = pd.read_csv("csvs/001.csv")
-print df.columns
-print df
-
 while True:
     line = sys.stdin.readline()
     if not line:
         break
     files = line.split()
-    #print files
+    print "**************************************************"
+    print "Receiving and processing CSV files:",files
     for f in files:
-        print f
 
         # read the csv file according to its name, the file path is hard-coded for simplicity.
         df = pd.read_csv("csvs/"+f) 
@@ -49,7 +44,7 @@ while True:
             for index,row in df.iterrows():
                 # put the column values in a tuple
                 r = tuple(row[col] for col in columns)
-                print r
+                #print r
                 # check if the row exists in table "student" or not
                 cur.execute("SELECT user_id FROM student WHERE user_id = ?", (row["user_id"],))
                 data=cur.fetchone()
@@ -80,7 +75,7 @@ while True:
             for index,row in df.iterrows():
                 # put the column values in a tuple
                 r = tuple(row[col] for col in columns)
-                print r
+                #print r
                 # check if the row exists in table "course" or not
                 cur.execute("SELECT course_id FROM course WHERE course_id = ?", (row["course_id"],))
                 data=cur.fetchone()
@@ -95,4 +90,16 @@ while True:
             conn.executemany("INSERT INTO course("+",".join(columns)+") VALUES (?, ?, ?)", new_rows)
             #for new_row in new_rows:
             #    print "insert into course("+",".join(columns)+") values (?, ?, ?)",new_row   
+
+    # print all active courses and active students
+    cur.execute("select course_id,course_name from course where state=\"active\" ")
+    active_courses = cur.fetchall()
+    for c in active_courses:
+        print "Active Course:",c[1]
+        cur.execute("select user_name from student where state=\"active\" and course_id=?", (c[0],))
+        active_students = cur.fetchall()
+        for s in active_students:
+            print "\tActive Student:",s[0]
+        print
+    print "**************************************************"
 
